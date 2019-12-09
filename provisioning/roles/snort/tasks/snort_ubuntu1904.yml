@@ -203,22 +203,3 @@
   args:
     chdir: "/tmp/snort3/build"
     creates: /tmp/snort3_makeinstall.out
-# - name: "Download compile, and install Snort 3 from the github repository"
-#   git:
-#     repo: git://github.com/snortadmin/snort3.git
-#     dest: "/tmp/snort3"
-# - name: "Configure snort3 "
-#   shell: ./configure_cmake.sh --prefix=/usr/local --enable-tcmalloc  >> /tmp/snort3_configure.out
-#   args:
-#     chdir: "/tmp/snort3"
-#     creates: /tmp/snort3_configure.out
-# - name: "Make snort3"
-#   shell: make  >> /tmp/snort3_make.out
-#   args:
-#     chdir: "/tmp/snort3/build"
-#     creates: /tmp/snort3_make.out
-# - name: "Make install snort3"
-#   shell: make  >> /tmp/snort3_makeinstall.out
-#   args:
-#     chdir: "/tmp/snort3/build"
-#     creates: /tmp/snort3_makeinstall.out

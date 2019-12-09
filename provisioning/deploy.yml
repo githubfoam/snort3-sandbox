@@ -25,3 +25,9 @@
     PKG_CONFIG_PATH: "/usr/local/lib64/pkgconfig:/usr/local/lib/pkgconfig:"
   roles:
     - snort
+- name: "Install snort"
+  gather_facts: true
+  hosts:  vg-snort-03
+  become: yes
+  roles:
+    - snort

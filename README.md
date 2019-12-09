@@ -1,8 +1,41 @@
 # snort3-sandbox
+Debian GNU/Linux 10 (buster)
+~~~~
+vagrant@vg-snort-03:~$ /usr/local/bin/snort -V
+
+   ,,_     -*> Snort++ <*-
+  o"  )~   Version 3.0.0 (Build 266)
+   ''''    By Martin Roesch & The Snort Team
+           http://snort.org/contact#team
+           Copyright (C) 2014-2019 Cisco and/or its affiliates. All rights reserved.
+           Copyright (C) 1998-2013 Sourcefire, Inc., et al.
+           Using DAQ version 3.0.0
+           Using LuaJIT version 2.1.0-beta3
+           Using OpenSSL 1.1.1d  10 Sep 2019
+           Using libpcap version 1.8.1
+           Using PCRE version 8.43 2019-02-23
+           Using ZLIB version 1.2.11
+           Using FlatBuffers 1.11.0
+           Using Hyperscan version 5.2.0 2019-12-09
+           Using LZMA version 5.2.4
+
+           test if Hyperscan works, from the build directory
+           hyperscan-5.2.0-build$ ./bin/unit-hyperscan
+           [==========] Running 3746 tests from 33 test cases.
+           [----------] Global test environment set-up.
+           [----------] 9 tests from CustomAllocator
+           [ RUN      ] CustomAllocator.DatabaseInfoBadAlloc
+           [       OK ] CustomAllocator.DatabaseInfoBadAlloc (78 ms)
+           [ RUN      ] CustomAllocator.TwoAlignedCompile
+           [       OK ] CustomAllocator.TwoAlignedCompile (25 ms)
+           [ RUN      ] CustomAllocator.TwoAlignedCompileError
+           [       OK ] CustomAllocator.TwoAlignedCompileError (1 ms)
+           [ RUN      ] CustomAllocator.TwoAlignedDatabaseInfo
+
+~~~~
 ubuntu1904
 ~~~~
 test if Hyperscan works, from the build directory
-
 cd ~/snort_src/hyperscan-5.2.0-build/
 ./bin/unit-hyperscan
 
