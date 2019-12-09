@@ -1,0 +1,224 @@
+---
+# [WARNING]: Could not find aptitude. Using apt-get instead fix
+- name: "APT: Install aptitude package"
+  apt:
+   name: aptitude
+   force_apt_get: yes
+- name: "Set timezone to Europe/Belfast cat /etc/timezone"
+  timezone:
+    name: 'Europe/Belfast'
+- name: "Install required packages before installing snort"
+  package:
+    name: "{{ snort_ubuntu1904_pre_reqs }}"
+    state: present
+# safec
+- name: "Extract safec for runtime bounds checks on certain legacy C-library calls,this is optional but recommended, into /tmp"
+  unarchive:
+    src: https://github.com/rurban/safeclib/releases/download/v{{ safec_major_version }}/libsafec-{{ safec_major_version }}.{{ safec_minor_version }}.tar.gz
+    dest: /tmp
+    creates: /tmp/libsafec-{{ safec_major_version }}.{{ safec_minor_version }}
+    remote_src: yes
+- name: "Configure safec"
+  shell: ./configure chdir=/tmp/libsafec-{{ safec_major_version }}.{{ safec_minor_version }} >> /tmp/safec_configure.out
+  args:
+    chdir: /tmp
+    creates: /tmp/safec_configure.out
+- name: "Make safec"
+  shell: make chdir=/tmp/libsafec-{{ safec_major_version }}.{{ safec_minor_version }} >> /tmp/safec_make.out
+  args:
+    chdir: /tmp
+    creates: /tmp/safec_make.out
+- name: "Make install safec"
+  shell: make install chdir=/tmp/libsafec-{{ safec_major_version }}.{{ safec_minor_version }} >> /tmp/safec_makeinstall.out
+  args:
+    chdir: /tmp
+    creates: /tmp/safec_makeinstall.out
+# pcre
+- name: "Install PCRE: Perl Compatible Regular Expressions into /tmp"
+  unarchive:
+    src: https://ftp.pcre.org/pub/pcre/pcre-{{ pcre_version }}.tar.gz
+    dest: /tmp
+    creates: /tmp/pcre-{{ pcre_version }}
+    remote_src: yes
+- name: "Configure pcre"
+  shell: ./configure chdir=/tmp/pcre-{{ pcre_version }} >> /tmp/pcre_configure.out
+  args:
+    chdir: /tmp
+    creates: /tmp/pcre_configure.out
+- name: "Make pcre"
+  shell: make chdir=/tmp/pcre-{{ pcre_version }} >> /tmp/pcre_make.out
+  args:
+    chdir: /tmp
+    creates: /tmp/pcre_make.out
+- name: "Make install pcre"
+  shell: make install chdir=/tmp/pcre-{{ pcre_version }} >> /tmp/pcre_makeinstall.out
+  args:
+    chdir: /tmp
+    creates: /tmp/pcre_makeinstall.out
+# gperfools
+- name: "Install gperfools, google’s thread-caching malloc used in chrome into /tmp,  Tcmalloc is optional but recommended"
+  unarchive:
+    src: https://github.com/gperftools/gperftools/releases/download/gperftools-{{ gperftools_version }}/gperftools-{{ gperftools_version }}.tar.gz
+    dest: /tmp
+    creates: /tmp/gperftools-{{ gperftools_version }}
+    remote_src: yes
+- name: "Configure gperftools"
+  shell: ./configure chdir=/tmp/gperftools-{{ gperftools_version }} >> /tmp/gperftools_configure.out
+  args:
+    chdir: /tmp
+    creates: /tmp/gperftools_configure.out
+- name: "Make gperftools"
+  shell: make chdir=/tmp/gperftools-{{ gperftools_version }} >> /tmp/gperftools_make.out
+  args:
+    chdir: /tmp
+    creates: /tmp/gperftools_make.out
+- name: "Make install gperftools"
+  shell: make install chdir=/tmp/gperftools-{{ gperftools_version }} >> /tmp/gperftools_makeinstall.out
+  args:
+    chdir: /tmp
+    creates: /tmp/gperftools_makeinstall.out
+# Ragel
+- name: "Snort 3 uses Hyperscan for fast pattern matching. Hyperscan requires Ragel and the Boost headers /tmp"
+  unarchive:
+    src: http://www.colm.net/files/ragel/ragel-{{ ragel_version }}.tar.gz
+    dest: /tmp
+    creates: /tmp/ragel-{{ ragel_version }}
+    remote_src: yes
+- name: "Configure ragel"
+  shell: ./configure chdir=/tmp/ragel-{{ ragel_version }} >> /tmp/ragel_configure.out
+  args:
+    chdir: /tmp
+    creates: /tmp/ragel_configure.out
+- name: "Make ragel"
+  shell: make chdir=/tmp/ragel-{{ ragel_version }} >> /tmp/ragel_make.out
+  args:
+    chdir: /tmp
+    creates: /tmp/ragel_make.out
+- name: "Make install ragel"
+  shell: make install chdir=/tmp/ragel-{{ ragel_version }} >> /tmp/ragel_makeinstall.out
+  args:
+    chdir: /tmp
+    creates: /tmp/ragel_makeinstall.out
+#  Boost
+- name: "Download the Boost 1.71.0 libraries into /tmp"
+  unarchive:
+    src: https://dl.bintray.com/boostorg/release/{{ boost_release }}/source/boost_{{ boost_version }}.tar.gz
+    dest: /tmp
+    creates: /tmp/boost_{{ boost_version }}
+    remote_src: yes
+#  Hyperscan
+- name: "Download Hyperscan 5.2 into /tmp"
+  unarchive:
+    src: https://github.com/intel/hyperscan/archive/v{{ hyperscan_version }}.tar.gz
+    dest: /tmp
+    creates: /tmp/hyperscan-{{ hyperscan_version }}
+    remote_src: yes
+- name: "Create hyperscan-xxx-build directory  if it does not exist"
+  file:
+    path: /tmp/hyperscan-{{ hyperscan_version }}-build
+    state: directory
+    mode: '0755'
+- name: "Install Hyperscan 5.2 from source, referencing the location of the Boost headers source directory"
+  shell: cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DBOOST_ROOT=/tmp/boost_{{ boost_version }}/ ../hyperscan-{{ hyperscan_version }} >> /tmp/hyperscan_cmake.out
+  args:
+    chdir: /tmp/hyperscan-{{ hyperscan_version }}-build
+    creates: /tmp/hyperscan_cmake.out
+
+- name: "Make Hyperscan 5.2"
+  shell: make chdir=/tmp/hyperscan-{{ hyperscan_version }}-build >> /tmp/hyperscan_make.out
+  args:
+    chdir: /tmp
+    creates: /tmp/hyperscan_make.out
+- name: "Make install Hyperscan 5.2"
+  shell: make install chdir=/tmp/hyperscan-{{ hyperscan_version }}-build >> /tmp/hyperscan_makeinstall.out
+  args:
+    chdir: /tmp
+    creates: /tmp/hyperscan_makeinstall.out
+#  flatbuffers
+- name: "Download, Snort has an optional requirement for flatbuffers, A memory efficient serialization library into /tmp"
+  unarchive:
+    src: https://github.com/google/flatbuffers/archive/v{{ flatbuffers_version }}.tar.gz
+    dest: /tmp
+    creates: /tmp/flatbuffers-{{ flatbuffers_version }}
+    remote_src: yes
+- name: "Create flatbuffers-build directory  if it does not exist"
+  file:
+    path: /tmp/flatbuffers-build
+    state: directory
+    mode: '0755'
+- name: "Install flatbuffers from source"
+  shell: cmake ../flatbuffers-{{ flatbuffers_version }} chdir=/tmp/flatbuffers-build >> /tmp/flatbuffers_cmake.out
+  args:
+    chdir: /tmp/flatbuffers-build
+    creates: /tmp/flatbuffers_cmake.out
+- name: "Make flatbuffers"
+  shell: make chdir=/tmp/flatbuffers-build >> /tmp/flatbuffers_make.out
+  args:
+    chdir: /tmp
+    creates: /tmp/flatbuffers_make.out
+- name: "Make install flatbuffers"
+  shell: make install chdir=/tmp/flatbuffers-build >> /tmp/flatbuffers_makeinstall.out
+  args:
+    chdir: /tmp
+    creates: /tmp/flatbuffers_makeinstall.out
+#  libdaq
+- name: "Download and install Data AcQuisition library-DAQ Snort3 uses a different DAQ than the Snort 2.9.x.x series"
+  git:
+    repo: https://github.com/snort3/libdaq.git
+    dest: "/tmp/libdaq"
+- name: "Bootstrap libdaq "
+  shell: ./bootstrap >> /tmp/libdaq_bootstrap.out
+  args:
+    chdir: "/tmp/libdaq"
+    creates: /tmp/libdaq_bootstrap.out
+- name: "Configure libdaq "
+  shell: ./configure  >> /tmp/libdaq_configure.out
+  args:
+    chdir: "/tmp/libdaq"
+    creates: /tmp/libdaq_configure.out
+- name: "Make libdaq"
+  shell: make  >> /tmp/libdaq_make.out
+  args:
+    chdir: "/tmp/libdaq"
+    creates: /tmp/libdaq_make.out
+- name: "Make install libdaq"
+  shell: make install >> /tmp/libdaq_makeinstall.out
+  args:
+    chdir: "/tmp/libdaq"
+    creates: /tmp/libdaq_makeinstall.out
+- name: "Update shared libraries ldconfig"
+  shell: ldconfig >> /tmp/ldconfig.out
+#  snort3
+- name: "Download compile, and install Snort 3 from the github repository"
+  git:
+    repo: git://github.com/snort3/snort3.git
+    dest: "/tmp/snort3"
+- name: "Configure snort3 "
+  shell: ./configure_cmake.sh --prefix=/usr/local >> /tmp/snort3_configure.out
+  args:
+    chdir: "/tmp/snort3"
+    creates: /tmp/snort3_configure.out
+- name: "Make snort3"
+  shell: make -j $(nproc) install  >> /tmp/snort3_makeinstall.out
+  args:
+    chdir: "/tmp/snort3/build"
+    creates: /tmp/snort3_makeinstall.out
+# - name: "Download compile, and install Snort 3 from the github repository"
+#   git:
+#     repo: git://github.com/snortadmin/snort3.git
+#     dest: "/tmp/snort3"
+# - name: "Configure snort3 "
+#   shell: ./configure_cmake.sh --prefix=/usr/local --enable-tcmalloc  >> /tmp/snort3_configure.out
+#   args:
+#     chdir: "/tmp/snort3"
+#     creates: /tmp/snort3_configure.out
+# - name: "Make snort3"
+#   shell: make  >> /tmp/snort3_make.out
+#   args:
+#     chdir: "/tmp/snort3/build"
+#     creates: /tmp/snort3_make.out
+# - name: "Make install snort3"
+#   shell: make  >> /tmp/snort3_makeinstall.out
+#   args:
+#     chdir: "/tmp/snort3/build"
+#     creates: /tmp/snort3_makeinstall.out

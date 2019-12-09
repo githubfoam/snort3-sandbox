@@ -1,0 +1,68 @@
+---
+snort_ubuntu1904_pre_reqs:
+  - build-essential
+  - autotools-dev
+  - libdumbnet-dev
+  - libluajit-5.1-dev
+  - libpcap-dev
+  - zlib1g-dev
+  - pkg-config
+  - libhwloc-dev
+  - cmake
+# optional but highly recommended sofware
+  - liblzma-dev
+  - openssl
+  - libssl-dev
+  - cpputest
+  - libsqlite3-dev
+  - uuid-dev
+# can beskipped unless you specifically want the dev guide
+  - asciidoc
+  - dblatex
+  - source-highlight
+  - w3m
+# few tools not necessary on Ubuntu19, installs Snort from the github repository,
+  - libtool
+  - git
+  - autoconf
+# The Snort DAQ Data Acquisition library pre-requisites
+  - bison
+  - flex
+# run Snort in inline mode using NFQ, install the required packages, not required for IDSmode or inline mode using afpacket
+  - libnetfilter-queue-dev
+  - libmnl-dev
+snort_centos80_pre_reqs:
+  -  epel-release
+# some helper packages are installed, which are not required by Snort
+  - vim
+  - git
+# Basic compilation tools required for building Snort are installed from the repository
+  - bison
+  - flex
+  - gcc
+  - gcc-c++
+  - make
+  - cmake
+  - autoconf
+  - libtool
+# Required Dependencies
+  - libpcap-devel
+  - pcre-devel
+  - libdnet-devel
+  - hwloc-devel
+  - openssl-devel
+  - zlib-devel
+  - luajit-devel
+  - pkgconfig
+# Snort 3 require the new LibDAQ
+  - libnfnetlink-devel
+  - libnetfilter_queue-devel
+  - libmnl-devel
+# Optional Dependencies LZMA and UUID
+  - xz-devel
+  - libuuid-devel
+# Optional Dependencies Hyperscan
+  - python3
+  - sqlite-devel
+# tcmalloc is a library created by Google (PerfTools) for improving memory handling in threaded programs.
+  - libunwind-devel

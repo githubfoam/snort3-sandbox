@@ -1,0 +1,18 @@
+---
+# centos80 settings
+base_dir: "/tmp/snort3"
+# colm_version: "0.13.0.7"
+# ragel_centos_version: "7.0.0.12"
+# ubuntu1904 settings
+snort_version: "2.9.15"
+daq_version: "2.0.6"
+luajit_version: "2.0.5"
+safec_major_version: "04062019"
+safec_minor_version: "0-ga99a05"
+pcre_version: "8.43"
+gperftools_version: "2.7"
+ragel_version: "6.10"
+boost_release: "1.71.0"
+boost_version: "1_71_0"
+hyperscan_version: "5.2.0"
+flatbuffers_version: "1.11.0"

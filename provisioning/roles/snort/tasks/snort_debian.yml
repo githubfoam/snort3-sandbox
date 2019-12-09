@@ -1,0 +1,10 @@
+---
+# [WARNING]: Could not find aptitude. Using apt-get instead fix
+- name: "APT: Install aptitude package"
+  apt:
+   name: aptitude
+   force_apt_get: yes
+# sudo dpkg-reconfigure tzdat
+- name: "Set timezone to Europe/Belfast cat /etc/timezone"
+  timezone:
+    name: Europe/Belfast
